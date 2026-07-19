@@ -1,0 +1,34 @@
+name: Compilar ArlightBingo
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: BingoPlugin
+      - uses: actions/checkout@v4
+        with:
+          repository: andrewBristowx/ArlightCore
+          path: ArlightCore
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Instalar ArlightCore
+        working-directory: ArlightCore
+        run: mvn --batch-mode clean install
+      - name: Compilar ArlightBingo
+        working-directory: BingoPlugin
+        run: mvn --batch-mode clean package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArlightBingo-1.0.0
+          path: BingoPlugin/target/ArlightBingo-1.0.0.jar
